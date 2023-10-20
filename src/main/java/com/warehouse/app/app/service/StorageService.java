@@ -28,8 +28,7 @@ public class StorageService {
     }
 
     public Storage changeStorage(Storage changedStorage){
-        storageRepository.save(changedStorage);
-        return changedStorage;
+        return storageRepository.save(changedStorage);
     }
 
     public void deleteStorage(Storage storage){

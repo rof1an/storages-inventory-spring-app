@@ -1,5 +1,6 @@
 package com.warehouse.app.app.model;
 
+import com.warehouse.app.app.dto.StorageDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,14 +12,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class Storage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storageId;
+    private long storageId;
 
     private String storageName;
-
     private String storageLocation;
-
-    public Storage(){}
 }

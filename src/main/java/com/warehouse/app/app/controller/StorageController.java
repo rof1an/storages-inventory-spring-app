@@ -22,9 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("api/storages")
 public class StorageController {
-    private final ProductService productService;
     private final StorageService storageService;
-    private final StorageProductService storageProductService;
 
     @GetMapping
     public List<StorageDto> getStorages() {
@@ -47,47 +45,6 @@ public class StorageController {
         }
     }
 
-
-    @GetMapping("/statement")
-    public List<StorageProductDto> getProductsInStorages() {
-        List<StorageProduct> storageProductList = storageProductService.getStorageProductList();
-
-        return storageProductList.stream()
-                .map(ps -> {
-                    Optional<Storage> storage = storageService.getOneStorage(ps.getStorageId());
-                    Optional<Product> product = productService.getProductById(ps.getProductId());
-
-                    if (storage.isPresent() && product.isPresent()) {
-                        return StorageMapper.storageProductModelToDto(
-                                storage.get(), product.get(), ps.getProductCount()
-                        );
-                    }
-                    return null;
-                })
-                .collect(Collectors.toList());
-    }
-
-    public Product getProduct(Long id) {
-        return productService.getProductById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-    }
-
-    public Storage getStorage(Long id) {
-        return storageService.getOneStorage(id)
-                .orElseThrow(() -> new RuntimeException("Storage not found"));
-    }
-
-    @PostMapping("/statement")
-    public StorageProductDto addStorageProduct(@RequestBody StorageProduct storageProduct) {
-        storageProductService.addProductInStorage(storageProduct);
-
-        return StorageMapper.storageProductModelToDto(
-                getStorage(storageProduct.getStorageId()),
-                getProduct(storageProduct.getProductId()),
-                storageProduct.getProductCount()
-        );
-    }
-
     @PostMapping
     public StorageDto addStorage(@RequestBody Storage storage) {
         storageService.addStorage(storage);
@@ -108,4 +65,5 @@ public class StorageController {
     public void deleteStorage(@PathVariable("id") Storage storage) {
         storageService.deleteStorage(storage);
     }
+
 }

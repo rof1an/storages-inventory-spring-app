@@ -2,6 +2,8 @@ package com.warehouse.app.app.controller;
 
 import com.warehouse.app.app.model.Product;
 import com.warehouse.app.app.repository.ProductRepository;
+import com.warehouse.app.app.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,11 @@ import java.util.List;
 @RequestMapping(path = "api/products")
 public class ProductController {
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @GetMapping()
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productService.getProducts();
     }
 
     @GetMapping("{id}")
@@ -27,22 +30,21 @@ public class ProductController {
 
     @PostMapping
     public Product addProduct(@RequestBody Product product) {
-        productRepository.save(product);
-        return product;
+        return productService.addOneProduct(product);
     }
 
     @PutMapping("{id}")
-    public Product changeProduct(
+    public Product updateProduct(
             @PathVariable("id") Product productFromDb,
             @RequestBody Product product
     ) {
-        BeanUtils.copyProperties(product, productFromDb, "id");
-        return productRepository.save(productFromDb);
+        Product existingProduct = productService.getProductById(productFromDb.getProductId()).orElseThrow(() ->
+                new EntityNotFoundException("Не найден товар с id: " + productFromDb.getProductId()));
+        return productService.updateProduct(existingProduct, product);
     }
 
     @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable("id") Product product){
+    public void deleteProduct(@PathVariable("id") Product product) {
         productRepository.delete(product);
     }
-
 }
