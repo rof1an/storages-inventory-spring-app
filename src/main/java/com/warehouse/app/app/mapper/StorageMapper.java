@@ -25,8 +25,4 @@ public class StorageMapper {
     ) {
         return new StorageProductDto(storage, product, productCount);
     }
-
-//    public static StorageProduct StorageProductDtoToModel(){
-//
-//    }
 }
